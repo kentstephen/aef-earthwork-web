@@ -1,5 +1,7 @@
 # aef-elevation-web
 
+**Open it: https://kentstephen.github.io/aef-elevation-web/** (Chrome, Edge, Firefox or Safari with WebGL2).
+
 The Earthwork map from [aef-earthwork](https://github.com/kentstephen/aef-earthwork) (first named
 aef-elevation), running entirely in the browser with no kernel and no server.
 
