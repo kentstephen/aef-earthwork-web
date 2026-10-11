@@ -1,24 +1,28 @@
-# nsi-dynamical
+# aef-elevation-web
 
-Browser experiments on cloud-native Zarr, read straight from the page with no server.
+The Earthwork map from [aef-earthwork](https://github.com/kentstephen/aef-earthwork) (first named
+aef-elevation), running entirely in the browser with no kernel and no server.
 
-## `web/`: Earthwork in the browser
+Earthwork is the chance the ground itself was dug, filled or graded between two years, from
+AlphaEarth, by a model taught where USGS 3DEP lidar flew the same ground twice.
 
-The chance the ground was dug, filled or graded between two years, scored for every 10 m pixel on
-the GPU. A port of the map in [aef-earthwork](https://github.com/kentstephen/aef-earthwork)'s
-`earthwork.py`, with the H3 fold replaced by a shader.
+## What runs where
 
-- **Data:** the AlphaEarth Foundations GeoZarr mosaic on Source Cooperative
-  (`tge-labs/aef-mosaic`: int8, 64 bands, 9 years, 256 x 256 chunks), read with zarrita.
-- **Rendering:** Development Seed's [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster)
-  (`ZarrLayer`). Each tile uploads both years as `r8sint` texture arrays; a shader module
-  (`src/earthwork-score.ts`) dequantizes, unit-normalizes, applies the logistic regression on
-  `[b, a, a*b, (a-b)^2]`, gates by `1 - cos`, and hands the score to a viridis colormap.
-  Switching models is a uniform change, with no refetch.
-- **Models:** `public/models/*.json`, the two logistic regressions from aef-earthwork
-  (`current`: US repeat lidar only; `abroad`: truth from outside the 48 states too).
-- **Checked:** against numpy on a 512 x 512 window at Huntsville AL, correlation 0.998.
-- **Limits:** the mosaic has no overviews, so the layer draws from zoom 12 in.
+- **The map's interface** (`web/src/ui.js`, `ui.css`) is the notebook's widget carried over: search,
+  the Earthwork panel, the imagery card, hold space, the pair, the keys.
+- **Earthwork, per 10 m pixel, on the GPU** (`web/src/earthwork.ts`, `earthwork-score.ts`). Development
+  Seed's [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) `ZarrLayer` reads both years
+  of the AlphaEarth GeoZarr mosaic (`tge-labs/aef-mosaic` on Source Cooperative) per chunk into `r8sint`
+  texture arrays; a shader module dequantizes, unit-normalizes, applies the logistic regression on
+  `[b, a, a*b, (a-b)^2]` and the change gate, then viridis. The notebook folded the same score to H3
+  hexagons in its kernel. Checked against numpy on a 512 x 512 window at Huntsville AL: correlation 0.998.
+- **The tooltip and the click's card** score the pixel on the CPU from the chunk already read.
+- **Sentinel-2** (`web/src/s2.ts`): Earth Genome's STAC search from the page, each footprint's COG read
+  and decoded in workers (`MosaicLayer` + `COGLayer`).
+- **Place names**: Overture divisions PMTiles, a pinned release with the newest one as the fallback.
+- **Models**: `web/public/models/*.json`, the notebook's two logistic regressions (`current`, `abroad`).
+
+The AlphaEarth mosaic has no coarser levels, so earthwork is drawn from zoom 12 in.
 
 ```sh
 cd web
@@ -26,11 +30,12 @@ npm install
 npm run dev
 ```
 
-## `nsi_bulk.py`
+## Also here
 
-The USACE National Structure Inventory 2022 for CONUS, folded to H3 res 6 with DuckDB.
+`nsi_bulk.py`: the USACE National Structure Inventory 2022 for CONUS, folded to H3 res 6 with DuckDB.
 
 ## Credits
 
-The AlphaEarth Foundations Satellite Embedding dataset is produced by Google and Google DeepMind
-(CC BY 4.0). Basemap by OpenFreeMap, OpenMapTiles, OpenStreetMap contributors.
+AlphaEarth Foundations Satellite Embedding dataset by Google and Google DeepMind (CC BY 4.0).
+Sentinel-2 mosaics by Earth Genome (CC BY 4.0). Place names from Overture Maps (ODbL). Search by
+Photon over OpenStreetMap (ODbL). Basemap by CARTO, OpenStreetMap contributors.
