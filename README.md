@@ -22,7 +22,7 @@ AlphaEarth, by a model taught where USGS 3DEP lidar flew the same ground twice.
 - **Sentinel-2** (`web/src/s2.ts`): Earth Genome's STAC search from the page, each footprint's COG read
   and decoded in workers (`MosaicLayer` + `COGLayer`).
 - **Place names**: Overture divisions PMTiles, a pinned release with the newest one as the fallback.
-- **Models**: `web/public/models/*.json`, the notebook's two logistic regressions: Current (US repeat lidar) and Global (`abroad.json`: US lidar plus truth from outside the US).
+- **Models**: `web/public/models/*.json`, the notebook's two logistic regressions: US only (`current.json`, US repeat lidar) and US + abroad (`abroad.json`, US lidar plus truth from outside the US).
 
 The AlphaEarth mosaic has no coarser levels, so earthwork is drawn from zoom 12 in.
 
