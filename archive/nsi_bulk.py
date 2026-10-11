@@ -21,8 +21,8 @@ count. A finer res means refolding from the zips (RES, then delete the output di
 
 Alaska, Hawaii and Puerto Rico are left out: HRRR, the weather this joins, is CONUS.
 
-    uv run nsi_bulk.py           # every CONUS state
-    uv run nsi_bulk.py 11 44     # just these state FIPS
+    uv run archive/nsi_bulk.py           # every CONUS state
+    uv run archive/nsi_bulk.py 11 44     # just these state FIPS
 """
 
 import subprocess
@@ -41,7 +41,7 @@ CONUS = (
 ).split()
 RES = 6
 DOWNLOADS = 4  # concurrent zip downloads; the fold runs one state at a time
-ROOT = Path(__file__).parent / "data" / "nsi_2022"
+ROOT = Path(__file__).parent.parent / "data" / "nsi_2022"
 ZIPS, OUT, TMP = ROOT / "zip", ROOT / f"h3r{RES}", ROOT / "tmp"
 
 
